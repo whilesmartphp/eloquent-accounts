@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "87864f7b91c884bea77c592182f9896a",
+    "content-hash": "d7465ab39a79458be7064b29a7eeff12",
     "packages": [
         {
             "name": "brick/math",
@@ -5796,6 +5796,58 @@
                 }
             ],
             "time": "2026-04-16T23:10:39+00:00"
+        },
+        {
+            "name": "whilesmart/eloquent-owner-access",
+            "version": "dev-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/whilesmartphp/eloquent-owner-access.git",
+                "reference": "2b36b6d761eca0747eb5c13ea46a0dd97c568a31"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/whilesmartphp/eloquent-owner-access/zipball/2b36b6d761eca0747eb5c13ea46a0dd97c568a31",
+                "reference": "2b36b6d761eca0747eb5c13ea46a0dd97c568a31",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^11.0|^12.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.22",
+                "orchestra/testbench": "^9.0|^10.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Whilesmart\\OwnerAccess\\OwnerAccessServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Whilesmart\\OwnerAccess\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Whilesmart Team"
+                }
+            ],
+            "description": "Pluggable polymorphic owner authorization for Laravel packages with owner_type/owner_id columns. Lets host apps decide who can see and modify owner-scoped records without coupling the underlying packages to a specific tenancy model.",
+            "support": {
+                "issues": "https://github.com/whilesmartphp/eloquent-owner-access/issues",
+                "source": "https://github.com/whilesmartphp/eloquent-owner-access/tree/dev"
+            },
+            "time": "2026-04-25T11:40:33+00:00"
         }
     ],
     "packages-dev": [
@@ -7111,21 +7163,22 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "14.1.4",
+            "version": "14.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "13dd8d33c6a23da100acec635cd351bfa7ff1a98"
+                "reference": "4991e47adce8e31e554aee8fdaabfc3b1d60707d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/13dd8d33c6a23da100acec635cd351bfa7ff1a98",
-                "reference": "13dd8d33c6a23da100acec635cd351bfa7ff1a98",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/4991e47adce8e31e554aee8fdaabfc3b1d60707d",
+                "reference": "4991e47adce8e31e554aee8fdaabfc3b1d60707d",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
+                "ext-mbstring": "*",
                 "ext-xmlwriter": "*",
                 "nikic/php-parser": "^5.7.0",
                 "php": ">=8.4",
@@ -7176,7 +7229,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
                 "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/14.1.4"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/14.1.6"
             },
             "funding": [
                 {
@@ -7196,7 +7249,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-04-23T17:00:20+00:00"
+            "time": "2026-04-24T13:10:08+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -8880,7 +8933,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {},
+    "stability-flags": {
+        "whilesmart/eloquent-owner-access": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
