@@ -9,12 +9,15 @@ use Whilesmart\Accounts\Http\Requests\StoreAccountRequest;
 use Whilesmart\Accounts\Http\Requests\UpdateAccountRequest;
 use Whilesmart\Accounts\Http\Resources\AccountResource;
 use Whilesmart\Accounts\Models\Account;
+use Whilesmart\OwnerAccess\Concerns\AuthorizesOwnerController;
 
 class AccountController extends Controller
 {
+    use AuthorizesOwnerController;
+
     public function index(Request $request): JsonResponse
     {
-        $query = Account::query();
+        $query = $this->scopeAccessibleOwners(Account::query(), $request->user());
 
         if ($request->filled('owner_type') && $request->filled('owner_id')) {
             $query->where('owner_type', $request->input('owner_type'))
@@ -62,8 +65,10 @@ class AccountController extends Controller
         ], 201);
     }
 
-    public function show(Account $account): JsonResponse
+    public function show(Account $account, Request $request): JsonResponse
     {
+        $this->authorizeAccessTo($account, $request->user());
+
         return response()->json([
             'success' => true,
             'data' => new AccountResource($account),
@@ -80,8 +85,9 @@ class AccountController extends Controller
         ]);
     }
 
-    public function destroy(Account $account): JsonResponse
+    public function destroy(Account $account, Request $request): JsonResponse
     {
+        $this->authorizeAccessTo($account, $request->user());
         $account->delete();
 
         return response()->json([
@@ -90,8 +96,9 @@ class AccountController extends Controller
         ]);
     }
 
-    public function refreshBalance(Account $account): JsonResponse
+    public function refreshBalance(Account $account, Request $request): JsonResponse
     {
+        $this->authorizeAccessTo($account, $request->user());
         $account->refreshBalance();
 
         return response()->json([

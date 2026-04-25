@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\ServiceProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -48,8 +49,8 @@ class InstallationTest extends TestCase
     #[Test]
     public function publishable_tags_are_registered(): void
     {
-        $configTag = \Illuminate\Support\ServiceProvider::$publishGroups['accounts-config'] ?? null;
-        $migrationsTag = \Illuminate\Support\ServiceProvider::$publishGroups['accounts-migrations'] ?? null;
+        $configTag = ServiceProvider::$publishGroups['accounts-config'] ?? null;
+        $migrationsTag = ServiceProvider::$publishGroups['accounts-migrations'] ?? null;
 
         $this->assertNotNull($configTag, 'Missing accounts-config publish tag.');
         $this->assertNotNull($migrationsTag, 'Missing accounts-migrations publish tag.');
