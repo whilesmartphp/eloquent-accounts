@@ -2,14 +2,20 @@
     "name": "whilesmart/eloquent-accounts",
     "description": "Polymorphic financial account records for Laravel: bank accounts, mobile money wallets, card processors, cash registers. Attachable to payments and expenses.",
     "type": "library",
-    "package-version": "1.0.0",
+    "version": "1.0.0",
     "license": "MIT",
     "authors": [
         { "name": "Whilesmart Team" }
     ],
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^11.0|^12.0"
+        "laravel/framework": "^11.0|^12.0",
+        "whilesmart/eloquent-owner-access": "^1.0"
+    },
+    "config": {
+        "platform": {
+            "php": "8.2"
+        }
     },
     "require-dev": {
         "orchestra/testbench": "^9.0|^10.0",

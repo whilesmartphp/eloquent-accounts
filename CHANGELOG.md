@@ -2,7 +2,7 @@
 
 All notable changes to `whilesmart/eloquent-accounts` are documented here.
 
-## [1.0.0] - 2026-04-24
+## [1.0.0] - 2026-06-12
 
 - Initial release
 - `Account` model with polymorphic `owner`

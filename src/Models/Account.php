@@ -11,6 +11,8 @@ use Whilesmart\Accounts\Contracts\Account as AccountContract;
 use Whilesmart\Accounts\Database\Factories\AccountFactory;
 use Whilesmart\Accounts\Enums\AccountStatus;
 use Whilesmart\Accounts\Enums\AccountType;
+use Whilesmart\Expenses\Models\Expense;
+use Whilesmart\Payments\Models\Payment;
 
 class Account extends Model implements AccountContract
 {
@@ -41,7 +43,7 @@ class Account extends Model implements AccountContract
      */
     public function payments(): MorphMany
     {
-        return $this->morphMany(\Whilesmart\Payments\Models\Payment::class, 'account');
+        return $this->morphMany(Payment::class, 'account');
     }
 
     /**
@@ -49,7 +51,7 @@ class Account extends Model implements AccountContract
      */
     public function expenses(): MorphMany
     {
-        return $this->morphMany(\Whilesmart\Expenses\Models\Expense::class, 'account');
+        return $this->morphMany(Expense::class, 'account');
     }
 
     /**
@@ -61,7 +63,7 @@ class Account extends Model implements AccountContract
     {
         $balance = (int) $this->opening_balance_cents;
 
-        if (class_exists(\Whilesmart\Payments\Models\Payment::class)) {
+        if (class_exists(Payment::class)) {
             $balance += (int) $this->payments()
                 ->where('status', 'succeeded')
                 ->where('direction', 'inbound')
@@ -73,7 +75,7 @@ class Account extends Model implements AccountContract
                 ->sum('amount_cents');
         }
 
-        if (class_exists(\Whilesmart\Expenses\Models\Expense::class)) {
+        if (class_exists(Expense::class)) {
             $balance -= (int) $this->expenses()
                 ->where('status', 'paid')
                 ->sum('total_cents');
