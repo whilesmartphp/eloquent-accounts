@@ -13,6 +13,7 @@ use Whilesmart\Accounts\Enums\AccountStatus;
 use Whilesmart\Accounts\Enums\AccountType;
 use Whilesmart\Expenses\Models\Expense;
 use Whilesmart\Payments\Models\Payment;
+use Whilesmart\Transactions\Models\Transaction;
 
 class Account extends Model implements AccountContract
 {
@@ -55,13 +56,38 @@ class Account extends Model implements AccountContract
     }
 
     /**
-     * Compute the balance from opening_balance_cents plus succeeded inbound
-     * payments minus succeeded outbound payments minus paid expenses.
-     * Degrades gracefully when sibling packages aren't installed.
+     * Ledger movements on this account. Requires whilesmart/eloquent-transactions.
+     */
+    public function transactions(): MorphMany
+    {
+        return $this->morphMany(Transaction::class, 'account');
+    }
+
+    /**
+     * Compute the balance from opening_balance_cents and account movements.
+     * When the transactions ledger is installed it is the single source of
+     * movement (payments and expenses post into it), so its posted entries
+     * are summed and the legacy payment/expense terms are skipped to avoid
+     * double counting. Without the ledger, falls back to succeeded payments
+     * minus paid expenses. Degrades gracefully when siblings aren't installed.
      */
     public function computeBalanceCents(): int
     {
         $balance = (int) $this->opening_balance_cents;
+
+        if (class_exists(Transaction::class)) {
+            $balance += (int) $this->transactions()
+                ->where('status', 'posted')
+                ->where('direction', 'credit')
+                ->sum('amount_cents');
+
+            $balance -= (int) $this->transactions()
+                ->where('status', 'posted')
+                ->where('direction', 'debit')
+                ->sum('amount_cents');
+
+            return $balance;
+        }
 
         if (class_exists(Payment::class)) {
             $balance += (int) $this->payments()
