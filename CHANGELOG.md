@@ -2,6 +2,9 @@
 
 All notable changes to `whilesmart/eloquent-accounts` are documented here.
 
+## [1.1.0] - 2026-08-16
+- Derive the account balance from the transactions ledger when whilesmart/eloquent-transactions is installed; without it, the existing succeeded-payment and paid-expense terms are unchanged
+
 ## [1.0.0] - 2026-06-12
 
 - Initial release
