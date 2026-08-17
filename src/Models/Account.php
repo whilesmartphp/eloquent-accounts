@@ -63,30 +63,21 @@ class Account extends Model implements AccountContract
         return $this->morphMany(Transaction::class, 'account');
     }
 
-    /**
-     * Compute the balance from opening_balance_cents and account movements.
-     * When the transactions ledger is installed it is the single source of
-     * movement (payments and expenses post into it), so its posted entries
-     * are summed and the legacy payment/expense terms are skipped to avoid
-     * double counting. Without the ledger, falls back to succeeded payments
-     * minus paid expenses. Degrades gracefully when siblings aren't installed.
-     */
+    // Posted ledger movements when the ledger is on and installed, otherwise
+    // the legacy succeeded-payment minus paid-expense terms.
     public function computeBalanceCents(): int
     {
         $balance = (int) $this->opening_balance_cents;
 
-        if (class_exists(Transaction::class)) {
-            $balance += (int) $this->transactions()
+        if (config('accounts.ledger_balance', true) && class_exists(Transaction::class)) {
+            $totals = $this->transactions()
                 ->where('status', 'posted')
-                ->where('direction', 'credit')
-                ->sum('amount_cents');
+                ->whereIn('direction', ['credit', 'debit'])
+                ->selectRaw('direction, SUM(amount_cents) as total')
+                ->groupBy('direction')
+                ->pluck('total', 'direction');
 
-            $balance -= (int) $this->transactions()
-                ->where('status', 'posted')
-                ->where('direction', 'debit')
-                ->sum('amount_cents');
-
-            return $balance;
+            return $balance + (int) $totals->get('credit', 0) - (int) $totals->get('debit', 0);
         }
 
         if (class_exists(Payment::class)) {
