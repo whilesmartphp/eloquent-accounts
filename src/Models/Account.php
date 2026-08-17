@@ -13,6 +13,7 @@ use Whilesmart\Accounts\Enums\AccountStatus;
 use Whilesmart\Accounts\Enums\AccountType;
 use Whilesmart\Expenses\Models\Expense;
 use Whilesmart\Payments\Models\Payment;
+use Whilesmart\Transactions\Models\Transaction;
 
 class Account extends Model implements AccountContract
 {
@@ -55,13 +56,29 @@ class Account extends Model implements AccountContract
     }
 
     /**
-     * Compute the balance from opening_balance_cents plus succeeded inbound
-     * payments minus succeeded outbound payments minus paid expenses.
-     * Degrades gracefully when sibling packages aren't installed.
+     * Ledger movements on this account. Requires whilesmart/eloquent-transactions.
      */
+    public function transactions(): MorphMany
+    {
+        return $this->morphMany(Transaction::class, 'account');
+    }
+
+    // Posted ledger movements when the ledger is on and installed, otherwise
+    // the legacy succeeded-payment minus paid-expense terms.
     public function computeBalanceCents(): int
     {
         $balance = (int) $this->opening_balance_cents;
+
+        if (config('accounts.ledger_balance', true) && class_exists(Transaction::class)) {
+            $totals = $this->transactions()
+                ->where('status', 'posted')
+                ->whereIn('direction', ['credit', 'debit'])
+                ->selectRaw('direction, SUM(amount_cents) as total')
+                ->groupBy('direction')
+                ->pluck('total', 'direction');
+
+            return $balance + (int) $totals->get('credit', 0) - (int) $totals->get('debit', 0);
+        }
 
         if (class_exists(Payment::class)) {
             $balance += (int) $this->payments()
